@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Máquina de Escribir Vintage Interactiva</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Abril+Fatface&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #110e0c radial-gradient(circle at 50% 10%, #2a211a 0%, #0d0b09 100%);
+      font-family: 'Special Elite', cursive, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 10px;
+      color: #eee;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #d4a373;
+      margin-bottom: 15px;
+      letter-spacing: 3px;
+      text-align: center;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+
+    /* CONTROLES Y SELECCIÓN DE MODO */
+    .controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      background: linear-gradient(180deg, #d4a373 0%, #b88655 100%);
+      color: #1a1715;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 0 4px 0 #6e4c29, 0 5px 10px rgba(0,0,0,0.5);
+      transition: all 0.1s ease;
+    }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #6e4c29;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 20px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #3d3834;
+    }
+
+    .mode-selector label {
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #ccc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-selector input[type="radio"] {
+      accent-color: #d4a373;
+      cursor: pointer;
+    }
+
+    /* CONTENEDOR PRINCIPAL DE LA MÁQUINA DE ESCRIBIR */
+    .typewriter-container {
+      position: relative;
+      width: 100%;
+      max-width: 920px;
+      background: linear-gradient(145deg, #2b2724, #151312);
+      border-radius: 25px 25px 15px 15px;
+      padding: 35px 20px 25px 20px;
+      box-shadow: 
+        0 30px 60px rgba(0,0,0,0.9), 
+        inset 0 2px 3px rgba(255,255,255,0.15),
+        inset 0 -5px 15px rgba(0,0,0,0.8);
+      border: 2px solid #3d3834;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* DETALLES MECÁNICOS */
+    .platen-roller-wrapper {
+      position: relative;
+      width: 92%;
+      height: 28px;
+      background: linear-gradient(180deg, #111 0%, #333 50%, #000 100%);
+      border-radius: 4px;
+      margin-bottom: -10px;
+      z-index: 1;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .platen-knob {
+      width: 18px;
+      height: 40px;
+      background: linear-gradient(90deg, #888 0%, #fff 50%, #444 100%);
+      border-radius: 3px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.8);
+    }
+    .platen-knob.left { margin-left: -18px; }
+    .platen-knob.right { margin-right: -18px; }
+
+    .paper-bar {
+      position: absolute;
+      top: 125px;
+      width: 88%;
+      height: 8px;
+      background: linear-gradient(180deg, #eee 0%, #999 50%, #444 100%);
+      border-radius: 4px;
+      z-index: 3;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    /* EL PAPEL VINTAGE */
+    .paper-container {
+      background-color: #f3ebd3;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(138, 101, 66, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(138, 101, 66, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(0, 0, 0, 0.05) 0%, transparent 60%);
+      width: 88%;
+      min-height: 320px;
+      max-height: 360px;
+      padding: 35px;
+      border-radius: 2px;
+      box-shadow: 
+        0 10px 25px rgba(0,0,0,0.5),
+        inset 0 0 60px rgba(138, 101, 66, 0.3);
+      border: 1px solid #d0c4a5;
+      position: relative;
+      overflow-y: auto;
+      margin-bottom: 25px;
+      z-index: 2;
+      transition: transform 0.05s ease;
+    }
+
+    #paper-content {
+      min-height: 240px;
+      font-size: 1.25rem;
+      color: #111;
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: break-word;
+      line-height: 1.6;
+    }
+
+    .char-typewriter {
+      display: inline-block;
+      color: #1a1a1a;
+      font-family: 'Special Elite', monospace;
+    }
+
+    .cutout {
+      display: inline-block;
+      padding: 1px 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      user-select: none;
+      box-shadow: 1px 2px 4px rgba(0,0,0,0.35);
+      line-height: 1.1;
+      margin: 0 1px;
+      vertical-align: middle;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.2em;
+      background-color: #222;
+      animation: blink 0.8s infinite;
+      vertical-align: sub;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* TECLADO FÍSICO Y ORGANIZACIÓN HORIZONTAL */
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #111;
+      padding: 20px 14px;
+      border-radius: 10px;
+      box-shadow: 
+        inset 0 0 20px rgba(0,0,0,0.9), 
+        0 2px 3px rgba(255,255,255,0.1),
+        0 10px 20px rgba(0,0,0,0.8);
+      width: 100%;
+      border: 1px solid #2a2521;
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* TECLAS CIRCULARES ESTILO VINTAGE */
+    .key {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%; /* Circulares */
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 55%, #a8a8a8 100%);
+      border: 3px solid #666;
+      color: #111;
+      font-family: 'Courier Prime', monospace;
+      font-weight: bold;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 
+        0 4px 0 #222, 
+        0 5px 8px rgba(0,0,0,0.7),
+        inset 0 2px 2px rgba(255,255,255,0.9);
+      transition: all 0.05s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .key:hover {
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ebebeb 50%, #bbbbbb 100%);
+    }
+
+    .key:active, .key.pressed {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #222, 0 2px 4px rgba(0,0,0,0.6);
+      background: #c5c5c5;
+    }
+
+    /* TECLA CORAZÓN CIRCULAR */
+    .key-heart {
+      background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
+      color: #800a21;
+      border-color: #a33b50;
+      font-size: 1.25rem;
+    }
+
+    .key-heart:hover {
+      background: radial-gradient(circle at 35% 35%, #fff0f0 0%, #fca8ba 50%, #e05e78 100%);
+    }
+
+    /* TECLAS ANCHAS PERO CON BORDES REDONDEADOS ESTILO BARRA */
+    .key-space {
+      width: 260px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+
+    .key-wide {
+      width: 72px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>MÁQUINA DE ESCRIBIR VINTAGE</h1>
+
+  <div class="controls-wrapper">
+    <div class="controls">
+      <button class="btn" onclick="clearPaper()">Limpiar Hoja</button>
+      <button class="btn" onclick="downloadLetter()">Descargar Carta (PNG)</button>
+    </div>
+
+    <div class="mode-selector">
+      <label>
+        <input type="radio" name="writeMode" value="typewriter" checked> Modo Máquina
+      </label>
+      <label>
+        <input type="radio" name="writeMode" value="cutout"> Modo Recortes de Revista
+      </label>
+    </div>
+  </div>
+
+  <div class="typewriter-container">
+    <div class="platen-roller-wrapper">
+      <div class="platen-knob left"></div>
+      <div class="platen-knob right"></div>
+    </div>
+    
+    <div class="paper-bar"></div>
+
+    <div class="paper-container" id="paper-container">
+      <span id="paper-content"></span><span class="cursor" id="cursor"></span>
+    </div>
+
+    <!-- TECLADO ORGANIZADO A LO ANCHO CON TECLAS CIRCULARES -->
+    <div class="keyboard" id="keyboard">
+      <!-- Fila 1 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="Q">Q</div>
+        <div class="key" data-key="W">W</div>
+        <div class="key" data-key="E">E</div>
+        <div class="key" data-key="R">R</div>
+        <div class="key" data-key="T">T</div>
+        <div class="key" data-key="Y">Y</div>
+        <div class="key" data-key="U">U</div>
+        <div class="key" data-key="I">I</div>
+        <div class="key" data-key="O">O</div>
+        <div class="key" data-key="P">P</div>
+        <div class="key" data-key="¡">¡</div>
+        <div class="key" data-key="!">!</div>
+      </div>
+
+      <!-- Fila 2 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="A">A</div>
+        <div class="key" data-key="S">S</div>
+        <div class="key" data-key="D">D</div>
+        <div class="key" data-key="F">F</div>
+        <div class="key" data-key="G">G</div>
+        <div class="key" data-key="H">H</div>
+        <div class="key" data-key="J">J</div>
+        <div class="key" data-key="K">K</div>
+        <div class="key" data-key="L">L</div>
+        <div class="key" data-key="Ñ">Ñ</div>
+        <div class="key" data-key="¿">¿</div>
+        <div class="key" data-key="?">?</div>
+      </div>
+
+      <!-- Fila 3 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="Z">Z</div>
+        <div class="key" data-key="X">X</div>
+        <div class="key" data-key="C">C</div>
+        <div class="key" data-key="V">V</div>
+        <div class="key" data-key="B">B</div>
+        <div class="key" data-key="N">N</div>
+        <div class="key" data-key="M">M</div>
+        <div class="key" data-key=",">,</div>
+        <div class="key" data-key=".">.</div>
+        <div class="key key-wide" data-key="Backspace">BORRAR</div>
+      </div>
+
+      <!-- Fila 4 -->
+      <div class="keyboard-row">
+        <div class="key key-space" data-key=" ">ESPACIO</div>
+        <div class="key key-heart" data-key="♡">♡</div>
+        <div class="key key-wide" data-key="Enter">ENTER</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint">Puedes hacer clic en el teclado interactivo o usar tu teclado físico.</p>
+
+  <script>
+    const paperContent = document.getElementById('paper-content');
+    const paperContainer = document.getElementById('paper-container');
+
+    const backgrounds = ['#1a1a1a', '#c9182b', '#e09f3e', '#005f73', '#0a9396', '#ca6702', '#bb3e03', '#ffffff', '#588157'];
+    const textColors  = ['#ffffff', '#ffffff', '#000000', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#000000', '#ffffff'];
+    const fonts       = ['\'Special Elite\', cursive', '\'Courier Prime\', monospace', '\'Abril Fatface\', serif', '\'Cinzel\', serif', 'sans-serif'];
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type = 'key') {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'bell') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, now);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.8);
+        return;
+      }
+
+      if (type === 'enter') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+        return;
+      }
+
+      const bufferSize = audioCtx.sampleRate * (type === 'space' ? 0.05 : 0.035); 
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1; 
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = type === 'space' ? 400 : (600 + Math.random() * 400); 
+
+      const gainNode = audioCtx.createGain();
+      const volume = type === 'space' ? 0.25 : 0.4;
+      gainNode.gain.setValueAtTime(volume, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, now + (type === 'space' ? 0.045 : 0.03));
+
+      noise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      noise.start(now);
+    }
+
+    function handleInput(key) {
+      const mode = document.querySelector('input[name="writeMode"]:checked').value;
+
+      if (key === 'Backspace') {
+        playSound('key');
+        removeLastChar();
+      } else if (key === 'Enter') {
+        playSound('enter');
+        addBreak();
+      } else if (key === ' ') {
+        playSound('space');
+        addSpace();
+      } else if (key.length >= 1) {
+        playSound('key');
+        if (mode === 'typewriter') {
+          addTypewriterLetter(key);
+        } else {
+          addCutoutLetter(key);
+        }
+      }
+
+      const currentText = paperContent.innerText;
+      const lastLine = currentText.split('\n').pop();
+      if (lastLine && lastLine.length === 55 && key !== 'Backspace') {
+        playSound('bell');
+      }
+
+      paperContainer.scrollTop = paperContainer.scrollHeight;
+    }
+
+    function addTypewriterLetter(char) {
+      const span = document.createElement('span');
+      span.className = 'char-typewriter';
+      span.textContent = char;
+
+      const randomOffsetY = (Math.random() * 1.5 - 0.75).toFixed(1);
+      const randomRotate = (Math.random() * 2 - 1).toFixed(1);
+      const randomOpacity = (0.85 + Math.random() * 0.15).toFixed(2);
+
+      span.style.transform = `translateY(${randomOffsetY}px) rotate(${randomRotate}deg)`;
+      span.style.opacity = randomOpacity;
+
+      paperContent.appendChild(span);
+      triggerPaperShift();
+    }
+
+    function addCutoutLetter(char) {
+      const span = document.createElement('span');
+      span.className = 'cutout';
+      span.textContent = char;
+
+      const randomIndex = Math.floor(Math.random() * backgrounds.length);
+      const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+      const randomRotation = (Math.random() * 10 - 5).toFixed(1); 
+      const randomScale = (0.92 + Math.random() * 0.15).toFixed(2);
+
+      span.style.backgroundColor = backgrounds[randomIndex];
+      span.style.color = textColors[randomIndex];
+      span.style.fontFamily = randomFont;
+      span.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
+
+      paperContent.appendChild(span);
+      triggerPaperShift();
+    }
+
+    function addSpace() {
+      const space = document.createTextNode(' ');
+      paperContent.appendChild(space);
+      triggerPaperShift();
+    }
+
+    function addBreak() {
+      const br = document.createElement('br');
+      paperContent.appendChild(br);
+    }
+
+    function removeLastChar() {
+      if (paperContent.lastChild) {
+        paperContent.removeChild(paperContent.lastChild);
+      }
+    }
+
+    function clearPaper() {
+      paperContent.innerHTML = '';
+    }
+
+    function triggerPaperShift() {
+      paperContainer.style.transform = 'translateY(-1px)';
+      setTimeout(() => {
+        paperContainer.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Interacción con teclado físico
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      let targetKey = e.key;
+
+      if (e.key === 'Backspace' || e.key === 'Enter' || e.key === ' ') {
+        targetKey = e.key;
+      } else if (e.key.length === 1) {
+        targetKey = e.key.toUpperCase();
+      } else {
+        return;
+      }
+
+      const keyElement = document.querySelector(`.key[data-key="${CSS.escape(targetKey)}"]`);
+      if (keyElement) {
+        keyElement.classList.add('pressed');
+        setTimeout(() => keyElement.classList.remove('pressed'), 100);
+      }
+
+      handleInput(targetKey);
+    });
+
+    // Clics interactivos en pantalla
+    document.getElementById('keyboard').addEventListener('click', (e) => {
+      const keyBtn = e.target.closest('.key');
+      if (keyBtn) {
+        const keyValue = keyBtn.getAttribute('data-key');
+        handleInput(keyValue);
+      }
+    });
+
+    function downloadLetter() {
+      const paper = document.getElementById('paper-container');
+      const cursor = document.getElementById('cursor');
+
+      cursor.style.display = 'none';
+
+      html2canvas(paper, {
+        scale: 2,
+        backgroundColor: '#f3ebd3'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'carta-vintage.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        cursor.style.display = 'inline-block';
+      });
+    }
+  </script>
+</body>
+</html>
