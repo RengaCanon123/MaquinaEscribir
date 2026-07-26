@@ -1,0 +1,299 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #110e0c radial-gradient(circle at 50% 30%, #2a211a 0%, #0d0b09 100%);
+  font-family: 'Special Elite', cursive, monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 10px;
+  color: #eee;
+  overflow-x: hidden;
+}
+
+h1 {
+  color: #d4a373;
+  margin-bottom: 15px;
+  letter-spacing: 3px;
+  text-align: center;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+/* CONTROLES Y SELECCIÓN DE MODO */
+.controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  z-index: 10;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  background: linear-gradient(180deg, #d4a373 0%, #b88655 100%);
+  color: #1a1715;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 4px 0 #6e4c29, 0 5px 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.1s ease;
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #6e4c29;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #3d3834;
+}
+
+.mode-selector label {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mode-selector input[type="radio"] {
+  accent-color: #d4a373;
+  cursor: pointer;
+}
+
+/* CONTENEDOR PRINCIPAL DE LA MÁQUINA DE ESCRIBIR */
+.typewriter-container {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  background: linear-gradient(145deg, #2b2724, #151312);
+  border-radius: 25px 25px 15px 15px;
+  padding: 35px 20px 25px 20px;
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.9), 
+    inset 0 2px 3px rgba(255, 255, 255, 0.15),
+    inset 0 -5px 15px rgba(0, 0, 0, 0.8);
+  border: 2px solid #3d3834;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* DETALLES MECÁNICOS */
+.platen-roller-wrapper {
+  position: relative;
+  width: 92%;
+  height: 28px;
+  background: linear-gradient(180deg, #111 0%, #333 50%, #000 100%);
+  border-radius: 4px;
+  margin-bottom: -10px;
+  z-index: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.platen-knob {
+  width: 18px;
+  height: 40px;
+  background: linear-gradient(90deg, #888 0%, #fff 50%, #444 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.platen-knob.left {
+  margin-left: -18px;
+}
+
+.platen-knob.right {
+  margin-right: -18px;
+}
+
+.paper-bar {
+  position: absolute;
+  top: 125px;
+  width: 88%;
+  height: 8px;
+  background: linear-gradient(180deg, #eee 0%, #999 50%, #444 100%);
+  border-radius: 4px;
+  z-index: 3;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* EL PAPEL VINTAGE */
+.paper-container {
+  background-color: #f3ebd3;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(138, 101, 66, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(138, 101, 66, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 90%, rgba(0, 0, 0, 0.05) 0%, transparent 60%);
+  width: 88%;
+  min-height: 320px;
+  max-height: 360px;
+  padding: 35px;
+  border-radius: 2px;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(138, 101, 66, 0.3);
+  border: 1px solid #d0c4a5;
+  position: relative;
+  overflow-y: auto;
+  margin-bottom: 25px;
+  z-index: 2;
+  transition: transform 0.05s ease;
+}
+
+#paper-content {
+  min-height: 240px;
+  font-size: 1.25rem;
+  color: #111;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+}
+
+.char-typewriter {
+  display: inline-block;
+  color: #1a1a1a;
+  font-family: 'Special Elite', monospace;
+}
+
+.cutout {
+  display: inline-block;
+  padding: 1px 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  user-select: none;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.35);
+  line-height: 1.1;
+  margin: 0 1px;
+  vertical-align: middle;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.2em;
+  background-color: #222;
+  animation: blink 0.8s infinite;
+  vertical-align: sub;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* TECLADO FÍSICO Y ORGANIZACIÓN HORIZONTAL */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #111;
+  padding: 22px 15px;
+  border-radius: 15px;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.9), 
+    0 2px 3px rgba(255, 255, 255, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  border: 1px solid #2a2521;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+/* TECLAS CIRCULARES ESTILO VINTAGE */
+.key {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 55%, #a8a8a8 100%);
+  border: 3px solid #666;
+  color: #111;
+  font-family: 'Courier Prime', monospace;
+  font-weight: bold;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 0 #222, 
+    0 5px 8px rgba(0, 0, 0, 0.7),
+    inset 0 2px 2px rgba(255, 255, 255, 0.9);
+  transition: all 0.05s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.key:hover {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ebebeb 50%, #bbbbbb 100%);
+}
+
+.key:active, .key.pressed {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #222, 0 2px 4px rgba(0, 0, 0, 0.6);
+  background: #c5c5c5;
+}
+
+/* TECLA CORAZÓN CIRCULAR */
+.key-heart {
+  background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
+  color: #800a21;
+  border-color: #a33b50;
+  font-size: 1.25rem;
+}
+
+.key-heart:hover {
+  background: radial-gradient(circle at 35% 35%, #fff0f0 0%, #fca8ba 50%, #e05e78 100%);
+}
+
+/* TECLAS ANCHAS (BARRA Y ACCIONES) */
+.key-space {
+  width: 260px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.key-wide {
+  width: 72px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.hint {
+  margin-top: 15px;
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+}
