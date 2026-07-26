@@ -234,8 +234,8 @@ h1 {
 
 /* TECLAS CIRCULARES ESTILO VINTAGE */
 .key {
-  width: 48px;
-  height: 48px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 55%, #a8a8a8 100%);
   border: 3px solid #666;
