@@ -1,227 +1,312 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Máquina de Escribir Vintage</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Abril+Fatface&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    body {
+      background-color: #12100e;
+      color: #e2d7c5;
+      font-family: 'Courier Prime', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px;
+      overflow-x: hidden;
+    }
 
-    <title>Vintage Typewriter</title>
+    h1 {
+      font-family: 'Special Elite', cursive;
+      letter-spacing: 2px;
+      margin: 10px 0;
+      font-size: 1.5rem;
+      text-align: center;
+      color: #d4a373;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    .controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Abril+Fatface&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
 
-    <!-- html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    .btn {
+      background: #bc8a5f;
+      border: 1px solid #7f5539;
+      color: #1c1917;
+      padding: 6px 12px;
+      font-family: 'Special Elite', cursive;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
 
+    .mode-selector {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85rem;
+    }
+
+    /* CONTENEDOR MÁQUINA DE ESCRIBIR */
+    .typewriter-container {
+      width: 100%;
+      max-width: 420px;
+      background: #1c1a17;
+      border-radius: 12px;
+      padding: 12px 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+      border: 1px solid #332f2b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* BARRA Y RODILLO */
+    .platen-roller-wrapper {
+      width: 90%;
+      height: 10px;
+      background: #333;
+      border-radius: 5px;
+      margin-bottom: 4px;
+    }
+
+    .paper-bar {
+      width: 95%;
+      height: 4px;
+      background: linear-gradient(90deg, #666, #ccc, #666);
+      margin-bottom: 8px;
+      border-radius: 2px;
+    }
+
+    /* HOJA DE PAPEL */
+    .paper-container {
+      width: 96%;
+      height: 180px;
+      background: #f4ede2;
+      color: #111;
+      padding: 12px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.4);
+      overflow-y: auto;
+      font-family: 'Special Elite', monospace;
+      font-size: 1rem;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.1em;
+      background-color: #111;
+      vertical-align: middle;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ESTILOS DE LETRAS */
+    .char-typewriter {
+      display: inline-block;
+      color: #111;
+      font-family: 'Special Elite', monospace;
+      font-weight: bold;
+    }
+
+    .cutout {
+      display: inline-block;
+      padding: 1px 4px;
+      margin: 1px;
+      border-radius: 2px;
+      font-weight: bold;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    /* TECLADO FÍSICO CORREGIDO */
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+      flex-wrap: nowrap; /* ESTO IMPIDE QUE EL ENTER SE BAJE */
+    }
+
+    .key {
+      flex: 1 1 0;
+      height: 34px;
+      max-width: 32px;
+      min-width: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 55%, #a8a8a8 100%);
+      border: 1.5px solid #444;
+      color: #111;
+      font-family: 'Courier Prime', monospace;
+      font-weight: bold;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #222, 0 2px 4px rgba(0,0,0,0.6);
+      user-select: none;
+      padding: 0;
+    }
+
+    .key:active, .key.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #222;
+    }
+
+    /* ANCHOS EXACTOS PARA TECLAS ESPECIALES EN CELULAR */
+    .key-space {
+      flex: 3 1 0 !important;
+      max-width: 110px !important;
+      border-radius: 12px;
+      font-size: 0.65rem;
+    }
+
+    .key-wide {
+      flex: 1.8 1 0 !important;
+      max-width: 50px !important;
+      border-radius: 12px;
+      font-size: 0.58rem;
+    }
+
+    .key-heart {
+      flex: 1 1 0 !important;
+      max-width: 32px !important;
+      background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
+      color: #800a21;
+      border-color: #a33b50;
+      font-size: 0.85rem;
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
-
 <body>
 
-    <h1>VINTAGE TYPEWRITER</h1>
+  <h1>VINTAGE TYPEWRITER</h1>
 
-    <!-- =======================
-            CONTROLES
-    ======================== -->
+  <div class="controls-wrapper">
+    <div class="controls">
+      <button class="btn" onclick="clearPaper()">Limpiar hoja</button>
+      <button class="btn" onclick="downloadLetter()">Descargar carta</button>
+    </div>
 
-    <section class="controls-wrapper">
+    <div class="mode-selector">
+      <label>
+        <input type="radio" name="writeMode" value="typewriter" checked> Máquina de escribir
+      </label>
+      <label>
+        <input type="radio" name="writeMode" value="cutout"> Carta anónima
+      </label>
+    </div>
+  </div>
 
-        <div class="controls">
+  <div class="typewriter-container">
+    <div class="platen-roller-wrapper"></div>
+    <div class="paper-bar"></div>
 
-            <button class="btn" onclick="clearPaper()">
-                Limpiar hoja
-            </button>
+    <div class="paper-container" id="paper-container">
+      <span id="paper-content"></span><span class="cursor" id="cursor"></span>
+    </div>
 
-            <button class="btn" onclick="downloadLetter()">
-                Descargar carta
-            </button>
+    <!-- TECLADO CON ESTRUCTURA EXACTA -->
+    <div class="keyboard" id="keyboard">
+      <!-- Fila 1 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="Q">Q</div>
+        <div class="key" data-key="W">W</div>
+        <div class="key" data-key="E">E</div>
+        <div class="key" data-key="R">R</div>
+        <div class="key" data-key="T">T</div>
+        <div class="key" data-key="Y">Y</div>
+        <div class="key" data-key="U">U</div>
+        <div class="key" data-key="I">I</div>
+        <div class="key" data-key="O">O</div>
+        <div class="key" data-key="P">P</div>
+        <div class="key" data-key="¡">¡</div>
+        <div class="key" data-key="!">!</div>
+      </div>
 
-        </div>
+      <!-- Fila 2 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="A">A</div>
+        <div class="key" data-key="S">S</div>
+        <div class="key" data-key="D">D</div>
+        <div class="key" data-key="F">F</div>
+        <div class="key" data-key="G">G</div>
+        <div class="key" data-key="H">H</div>
+        <div class="key" data-key="J">J</div>
+        <div class="key" data-key="K">K</div>
+        <div class="key" data-key="L">L</div>
+        <div class="key" data-key="Ñ">Ñ</div>
+        <div class="key" data-key="¿">¿</div>
+        <div class="key" data-key="?">?</div>
+      </div>
 
-        <div class="mode-selector">
+      <!-- Fila 3 -->
+      <div class="keyboard-row">
+        <div class="key" data-key="Z">Z</div>
+        <div class="key" data-key="X">X</div>
+        <div class="key" data-key="C">C</div>
+        <div class="key" data-key="V">V</div>
+        <div class="key" data-key="B">B</div>
+        <div class="key" data-key="N">N</div>
+        <div class="key" data-key="M">M</div>
+        <div class="key" data-key=",">,</div>
+        <div class="key" data-key=".">.</div>
+        <div class="key key-wide" data-key="Backspace">BORRAR</div>
+      </div>
 
-            <label>
-
-                <input
-                    type="radio"
-                    name="writeMode"
-                    value="typewriter"
-                    checked>
-
-                Máquina de escribir
-
-            </label>
-
-            <label>
-
-                <input
-                    type="radio"
-                    name="writeMode"
-                    value="cutout">
-
-                Carta anónima
-
-            </label>
-
-        </div>
-
-    </section>
-
-    <!-- =======================
-            MÁQUINA
-    ======================== -->
-
-    <main class="typewriter">
-
-        <!-- Rodillo -->
-
-        <div class="platen">
-
-            <div class="knob left"></div>
-
-            <div class="roller"></div>
-
-            <div class="knob right"></div>
-
-        </div>
-
-        <!-- Barra -->
-
-        <div class="paper-holder"></div>
-
-        <!-- Papel -->
-
-        <section
-            class="paper-container"
-            id="paper-container">
-
-            <div
-                id="paper-content">
-            </div>
-
-            <span
-                class="cursor"
-                id="cursor">
-            </span>
-
-        </section>
-
-        <!-- Panel -->
-
-        <div class="front-panel">
-
-            <div class="brand">
-
-                VINTAGE
-
-            </div>
-
-            <div class="gold-line"></div>
-
-        </div>
-
-        <!-- =======================
-                TECLADO
-        ======================== -->
-
-        <section
-            class="keyboard"
-            id="keyboard">
-
-            <div class="keyboard-row">
-
-                <div class="key" data-key="Q">Q</div>
-                <div class="key" data-key="W">W</div>
-                <div class="key" data-key="E">E</div>
-                <div class="key" data-key="R">R</div>
-                <div class="key" data-key="T">T</div>
-                <div class="key" data-key="Y">Y</div>
-                <div class="key" data-key="U">U</div>
-                <div class="key" data-key="I">I</div>
-                <div class="key" data-key="O">O</div>
-                <div class="key" data-key="P">P</div>
-
-            </div>
-
-            <div class="keyboard-row">
-
-                <div class="key" data-key="A">A</div>
-                <div class="key" data-key="S">S</div>
-                <div class="key" data-key="D">D</div>
-                <div class="key" data-key="F">F</div>
-                <div class="key" data-key="G">G</div>
-                <div class="key" data-key="H">H</div>
-                <div class="key" data-key="J">J</div>
-                <div class="key" data-key="K">K</div>
-                <div class="key" data-key="L">L</div>
-                <div class="key" data-key="Ñ">Ñ</div>
-
-            </div>
-
-            <div class="keyboard-row">
-
-                <div class="key" data-key="Z">Z</div>
-                <div class="key" data-key="X">X</div>
-                <div class="key" data-key="C">C</div>
-                <div class="key" data-key="V">V</div>
-                <div class="key" data-key="B">B</div>
-                <div class="key" data-key="N">N</div>
-                <div class="key" data-key="M">M</div>
-
-                <div
-                    class="key key-wide"
-                    data-key="Backspace">
-
-                    BORRAR
-
-                </div>
-
-            </div>
-
-            <div class="keyboard-row">
-
-                <div
-                    class="key key-space"
-                    data-key=" ">
-
-                    ESPACIO
-
-                </div>
-
-                <div
-                    class="key key-wide"
-                    data-key="Enter">
-
-                    ENTER
-
-                </div>
-      
+      <!-- Fila 4 -->
       <div class="keyboard-row">
         <div class="key key-space" data-key=" ">ESPACIO</div>
         <div class="key key-heart" data-key="♡">♡</div>
         <div class="key key-wide" data-key="Enter">ENTER</div>
       </div>
-                
-            </div>
+    </div>
+  </div>
 
-        </section>
+  <p class="hint">Puedes escribir usando el teclado físico o haciendo clic sobre las teclas.</p>
 
-    </main>
-    
-
-    <p class="hint">
-
-        Puedes escribir usando el teclado físico o haciendo clic sobre las teclas.
-
-    </p>
-
-    <!-- JavaScript -->
-
-    <script src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
-
 </html>
