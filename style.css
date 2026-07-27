@@ -209,38 +209,84 @@ h1 {
   50% { opacity: 0; }
 }
 
-/* FILAS DEL TECLADO CON AJUSTE FLEXIBLE PARA MÓVIL */
+/* CONTENEDOR DEL TECLADO */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 500px;
+  margin: 15px auto 0 auto;
+  padding: 10px 5px;
+  box-sizing: border-box;
+}
+
+/* FILAS DEL TECLADO (PROHIBIDO SALTAR DE LÍNEA) */
 .keyboard-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3px; /* Reducimos el espacio entre teclas para que quepa la fila completa */
+  gap: 3px;
   width: 100%;
+  flex-wrap: nowrap !important; /* Evita que las teclas se bajen a otra fila */
 }
 
-/* TECLAS CIRCULARES CON TAMAÑO Y FUENTE ADAPTATIVOS */
+/* TECLAS CIRCULARES (SE ADAPTAN AL ANCHO DEL CELULAR) */
 .key {
-  width: 38px;  /* Un poco más compactas para que entren las 12 teclas de la primera fila */
-  height: 38px;
+  flex: 0 1 34px; /* Permite ajustar el tamaño en pantallas pequeñas */
+  height: 34px;
+  min-width: 24px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 55%, #a8a8a8 100%);
-  border: 2px solid #666;
+  border: 2px solid #555;
   color: #111;
   font-family: 'Courier Prime', monospace;
   font-weight: bold;
-  font-size: 1rem; /* Alrededor de 16px para que quede centrado y legible dentro del círculo */
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 
-    0 3px 0 #222, 
-    0 4px 6px rgba(0,0,0,0.7),
+    0 2px 0 #222, 
+    0 3px 5px rgba(0,0,0,0.6),
     inset 0 1px 2px rgba(255,255,255,0.9);
   transition: all 0.05s ease;
   user-select: none;
-  flex-shrink: 1; /* Permite que se acomoden si la pantalla es muy angosta */
+  box-sizing: border-box;
+  padding: 0;
 }
+
+.key:active, .key.pressed {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #222, inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* TECLAS ESPECIALES Y CORAZÓN */
+.key-space {
+  flex: 2 1 100px !important;
+  max-width: 140px;
+  border-radius: 15px;
+  font-size: 0.7rem;
+}
+
+.key-wide {
+  flex: 1 1 50px !important;
+  max-width: 65px;
+  border-radius: 15px;
+  font-size: 0.65rem;
+}
+
+.key-heart {
+  flex: 0 0 34px !important;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
+  color: #800a21;
+  border-color: #a33b50;
+  font-size: 1rem;
+}
+
 
 
 /* TECLAS ESPECIALES Y CORAZÓN */
