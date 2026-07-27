@@ -232,12 +232,13 @@ h1 {
 }
 
 /* 3. AJUSTE DE LA BARRA DE ESPACIO, ENTER Y CORAZÓN */
-.key-space {
-  width: 130px !important; /* Reducimos el ancho de la barra espaciadora */
-  max-width: 130px !important;
-  border-radius: 15px;
-  font-size: 0.65rem;
-}
+    .key-space {
+      flex: 3 1 0 !important;
+      max-width: 90px !important; /* Ajustado para dar paso a los paréntesis */
+      border-radius: 12px;
+      font-size: 0.6rem;
+    }
+
 
 .key-wide {
   width: 50px !important;  /* Reducimos el ancho de los botones BORRAR y ENTER */
