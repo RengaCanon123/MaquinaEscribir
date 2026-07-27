@@ -243,16 +243,24 @@ h1 {
 }
 
 
-/* TECLA CORAZÓN CIRCULAR */
+/* TECLAS ESPECIALES Y CORAZÓN */
+.key-space {
+  width: 140px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.key-wide {
+  width: 60px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+}
+
 .key-heart {
   background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
   color: #800a21;
   border-color: #a33b50;
-  font-size: 1.25rem;
-}
-
-.key-heart:hover {
-  background: radial-gradient(circle at 35% 35%, #fff0f0 0%, #fca8ba 50%, #e05e78 100%);
+  font-size: 1.1rem;
 }
 
 /* TECLAS ANCHAS (BARRA Y ACCIONES) */
