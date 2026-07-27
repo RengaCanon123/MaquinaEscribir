@@ -208,29 +208,55 @@ h1 {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
-
-/* CONTENEDOR DEL TECLADO */
+/* 1. LIMITAR EL ANCHO MÁXIMO DEL TECLADO PARA QUE NO SE SALGA EN CELULARES */
 .keyboard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
-  max-width: 500px;
-  margin: 15px auto 0 auto;
-  padding: 10px 5px;
+  max-width: 360px; /* Ancho perfecto para pantallas móviles */
+  margin: 10px auto;
+  padding: 0 5px;
   box-sizing: border-box;
 }
 
-/* FILAS DEL TECLADO (PROHIBIDO SALTAR DE LÍNEA) */
+/* 2. REGLA OBLIGATORIA PARA LAS FILAS (SIN SALTO DE LÍNEA) */
 .keyboard-row {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 3px;
   width: 100%;
-  flex-wrap: nowrap !important; /* Evita que las teclas se bajen a otra fila */
+  flex-wrap: nowrap !important; /* Prohíbe que el ENTER o el Corazón bajen */
 }
+
+/* 3. AJUSTE DE LA BARRA DE ESPACIO, ENTER Y CORAZÓN */
+.key-space {
+  width: 130px !important; /* Reducimos el ancho de la barra espaciadora */
+  max-width: 130px !important;
+  border-radius: 15px;
+  font-size: 0.65rem;
+}
+
+.key-wide {
+  width: 50px !important;  /* Reducimos el ancho de los botones BORRAR y ENTER */
+  max-width: 50px !important;
+  border-radius: 15px;
+  font-size: 0.6rem;
+}
+
+.key-heart {
+  width: 32px !important;  /* Tamaño circular estándar */
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffeded 0%, #f7a8b8 55%, #d65c75 100%);
+  color: #800a21;
+  border-color: #a33b50;
+  font-size: 0.9rem;
+}
+
 
 /* TECLAS CIRCULARES (SE ADAPTAN AL ANCHO DEL CELULAR) */
 .key {
